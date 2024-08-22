@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Informações do Arquivo</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <footer>
+            <p class="author">Autor: Erick Daniel Teixeira Vier</p>
+        </footer>
+        <h1>Informações do Arquivo</h1>
+    
+        <p id="fileName"></p>
+        <p id="fileSize"></p>
+        <a id="downloadButton" class="download-link" onclick="downloadFile()">Fazer Download</a>
+    </div>
+    
+    <script>
+        function formatFileSize(size) {
+            if (size < 1024) {
+                return size + ' bytes';
+            } else if (size < 1024 * 1024) {
+                return (size / 1024).toFixed(2) + ' KB';
+            } else if (size < 1024 * 1024 * 1024) {
+                return (size / (1024 * 1024)).toFixed(2) + ' MB';
+            } else {
+                return (size / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+            }
+        }
+
+        const fileInfoName = document.getElementById("fileName");
+        const fileSizeDisplay = document.getElementById("fileSize");
+        const downloadButton = document.getElementById("downloadButton");
+
+        const params = new URLSearchParams(window.location.search);
+        const fileName = params.get("name");
+        const fileSize = window.localStorage.getItem("fileSize");
+        const fileData = window.localStorage.getItem("fileData");
+
+        if (fileName && fileSize) {
+            const cleanFileName = decodeURIComponent(fileName).replace("Arquivo selecionado: ", "");
+            fileInfoName.innerHTML = `Arquivo selecionado: <strong>${cleanFileName}</strong>`;
+            downloadButton.textContent = "Fazer Download";
+            downloadButton.style.display = 'block';
+
+            // Exibir os dados do arquivo
+            const fileSizeFormatted = formatFileSize(Number(fileSize));
+            fileSizeDisplay.textContent = `Tamanho do arquivo: ${fileSizeFormatted}`;
+
+            // Define os atributos do botão de download
+            downloadButton.setAttribute("href", fileData);
+            downloadButton.setAttribute("download", cleanFileName);
+        }
+
+        // Função para baixar o arquivo com o nome correto
+        function downloadFile() {
+            // Cria um elemento de link temporário
+            const link = document.createElement("a");
+            link.href = fileData;
+            link.download = cleanFileName;
+
+            // Dispara o evento de clique no link
+            link.click();
+        }
+    </script>
+    <div class="footer-links">
+        <a href="index.html">Home</a> |
+        <a href="about.html">About</a> |
+        <a href="politica-de-privacidade.html">Política de Privacidade</a> |
+        <a href="licença.html">Licença</a> |
+        <a href="mailto:erixkat10@gmail.com">Contato</a> |
+        <a href="https://github.com/ErickDaniel7/QRShare">GitHub</a>
+    </div>
+</body>
+</html>
