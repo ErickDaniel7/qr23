@@ -35,23 +35,22 @@
 
         const params = new URLSearchParams(window.location.search);
         const fileName = params.get("name");
-        const fileSize = window.localStorage.getItem("fileSize");
-        const fileData = window.localStorage.getItem("fileData");
+        const fileSize = params.get("size");
+        const fileData = params.get("link");
 
         if (fileName && fileSize && fileData) {
             const cleanFileName = decodeURIComponent(fileName);
             fileInfoName.innerHTML = `Arquivo selecionado: <strong>${cleanFileName}</strong>`;
-            downloadButton.textContent = "Fazer Download";
-
+            
             // Exibir o tamanho do arquivo
             const fileSizeFormatted = formatFileSize(Number(fileSize));
             fileSizeDisplay.textContent = `Tamanho do arquivo: ${fileSizeFormatted}`;
 
-            // Configura o botão de download
+            // Define os atributos do botão de download
             downloadButton.setAttribute("href", fileData);
             downloadButton.setAttribute("download", cleanFileName);
         } else {
-            fileInfoName.innerHTML = "Nenhuma informação de arquivo disponível.";
+            fileInfoName.textContent = "Nenhuma informação de arquivo disponível!";
             fileSizeDisplay.textContent = "";
             downloadButton.style.display = 'none';
         }
