@@ -36,10 +36,10 @@ function formatFileSize(size) {
 
 async function shortenURL(longUrl) {
     try {
-        const response = await fetch(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(longUrl)}`);
+        const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
         if (response.ok) {
             const data = await response.json();
-            return data.result.short_link;
+            return data.shorturl;
         } else {
             throw new Error('Erro ao encurtar a URL');
         }
@@ -81,7 +81,7 @@ async function copyDownloadLink() {
     }
 }
 
-function generateQRCode() {
+async function generateQRCode() {
     const file = fileInput.files[0];
     if (file) {
         const fileReader = new FileReader();
@@ -92,11 +92,16 @@ function generateQRCode() {
             // Calcular o tamanho do arquivo
             const fileSize = file.size;
 
+            // Armazenar os dados do arquivo e o tamanho em localStorage
+            window.localStorage.setItem('fileData', qrCodeData);
+            window.localStorage.setItem('fileSize', fileSize);
+
             // URL da página de informações do arquivo
-            const infoPageUrl = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}&size=${encodeURIComponent(fileSize)}&link=${encodeURIComponent(qrCodeData)}`;
+            const infoPageUrl = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}`;
 
             // Criar um link que inclui a URL da página de informações
-            const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(infoPageUrl)}`;
+            const shortUrl = await shortenURL(infoPageUrl);
+            const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shortUrl)}`;
 
             qrCodeImage.src = qrCodeLink;
             qrCodeContainer.style.display = 'block';
@@ -106,6 +111,10 @@ function generateQRCode() {
             downloadButton.download = file.name;
             downloadButton.style.display = 'block';
             copyButton.style.display = 'block';
+
+            // Passar os dados do arquivo para a página de informações
+            const infoPageLink = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}&size=${fileSize}`;
+            window.localStorage.setItem('infoPageLink', infoPageLink);
         }
         fileReader.readAsDataURL(file);
     }
