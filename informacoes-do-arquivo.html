@@ -13,7 +13,7 @@
     
         <p id="fileName"></p>
         <p id="fileSize"></p>
-        <a id="downloadButton" class="download-link" download>Fazer Download</a>
+        <a id="downloadButton" class="download-link" onclick="downloadFile()">Fazer Download</a>
     </div>
     
     <script>
@@ -35,24 +35,33 @@
 
         const params = new URLSearchParams(window.location.search);
         const fileName = params.get("name");
-        const fileSize = params.get("size");
-        const fileData = params.get("link");
+        const fileSize = window.localStorage.getItem("fileSize");
+        const fileData = window.localStorage.getItem("fileData");
 
-        if (fileName && fileSize && fileData) {
-            const cleanFileName = decodeURIComponent(fileName);
+        if (fileName && fileSize) {
+            const cleanFileName = decodeURIComponent(fileName).replace("Arquivo selecionado: ", "");
             fileInfoName.innerHTML = `Arquivo selecionado: <strong>${cleanFileName}</strong>`;
-            
-            // Exibir o tamanho do arquivo
+            downloadButton.textContent = "Fazer Download";
+            downloadButton.style.display = 'block';
+
+            // Exibir os dados do arquivo
             const fileSizeFormatted = formatFileSize(Number(fileSize));
             fileSizeDisplay.textContent = `Tamanho do arquivo: ${fileSizeFormatted}`;
 
             // Define os atributos do botão de download
             downloadButton.setAttribute("href", fileData);
             downloadButton.setAttribute("download", cleanFileName);
-        } else {
-            fileInfoName.textContent = "Nenhuma informação de arquivo disponível!";
-            fileSizeDisplay.textContent = "";
-            downloadButton.style.display = 'none';
+        }
+
+        // Função para baixar o arquivo com o nome correto
+        function downloadFile() {
+            // Cria um elemento de link temporário
+            const link = document.createElement("a");
+            link.href = fileData;
+            link.download = cleanFileName;
+
+            // Dispara o evento de clique no link
+            link.click();
         }
     </script>
     <div class="footer-links">
