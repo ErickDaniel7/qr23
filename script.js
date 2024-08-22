@@ -54,7 +54,7 @@ async function copyDownloadLink() {
     const fileName = document.getElementById("fileName").textContent.replace('Arquivo selecionado: ', '').replace('<strong>', '').replace('</strong>', '');
 
     // Gerar um link para a página de informações do arquivo
-    const infoPageLink = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(fileName)}&link=${encodeURIComponent(downloadLink)}`;
+    const infoPageLink = `https://qr-share-theta.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(fileName)}&link=${encodeURIComponent(downloadLink)}`;
 
     try {
         const shortUrl = await shortenURL(infoPageLink);
@@ -81,7 +81,7 @@ async function copyDownloadLink() {
     }
 }
 
-async function generateQRCode() {
+function generateQRCode() {
     const file = fileInput.files[0];
     if (file) {
         const fileReader = new FileReader();
@@ -97,11 +97,10 @@ async function generateQRCode() {
             window.localStorage.setItem('fileSize', fileSize);
 
             // URL da página de informações do arquivo
-            const infoPageUrl = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}`;
+            const infoPageUrl = `https://qr-share-theta.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}`;
 
             // Criar um link que inclui a URL da página de informações
-            const shortUrl = await shortenURL(infoPageUrl);
-            const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shortUrl)}`;
+            const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(infoPageUrl)}`;
 
             qrCodeImage.src = qrCodeLink;
             qrCodeContainer.style.display = 'block';
@@ -113,7 +112,7 @@ async function generateQRCode() {
             copyButton.style.display = 'block';
 
             // Passar os dados do arquivo para a página de informações
-            const infoPageLink = `https://qr23.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}&size=${fileSize}`;
+            const infoPageLink = `https://qr-share-theta.vercel.app/informacoes-do-arquivo.html?name=${encodeURIComponent(file.name)}&size=${fileSize}`;
             window.localStorage.setItem('infoPageLink', infoPageLink);
         }
         fileReader.readAsDataURL(file);
